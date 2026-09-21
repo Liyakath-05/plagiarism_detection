@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plagiarism Detector | AI Workspace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- Background Parallax Image Carousel -->
+    <div class="bg-scroll-container">
+        <!-- Visualization Slide 1: AI Robot Analyzing Documents -->
+        <div class="bg-layer active" style="background-image: url('robort.png');"></div>
+        <!-- Visualization Slide 2: Robot Legal/Ethics Judgment -->
+        <div class="bg-layer" style="background-image: url('robort.jpg');"></div>
+    </div>
+    <div class="bg-overlay"></div>
+
+    <!-- Top Navigation Header -->
+    <nav>
+        <div class="brand">PLAGIARISM DETECTION Workspace</div>
+        <div class="auth-actions">
+            <button class="btn-outline" onclick="openModal('login')">Sign In</button>
+            <button class="btn-primary" onclick="openModal('register')">Get Started</button>
+        </div>
+    </nav>
+
+    <!-- Main Workspace Section (Slide 1) -->
+    <section id="section1">
+        <main class="container">
+            <!-- Analytics Dashboard Bar -->
+            <div class="analytics-bar">
+                <div class="analytics-card" style="cursor: pointer;" onclick="showDetailedReport()">
+                    <span class="analytics-title">Total Scans Run</span>
+                    <span class="analytics-value" id="statTotalScans">0</span>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-title">Average Match</span>
+                    <span class="analytics-value" id="statAvgMatch">0%</span>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-title">Engine Status</span>
+                    <span class="analytics-value" id="statEngineStatus" style="color: var(--danger); font-size: 1.1rem; margin-top: 6px;">● Offline</span>
+                </div>
+            </div>
+
+            <header style="text-align: center; margin-bottom: 24px;">
+                <h1 style="font-size: 2rem; font-weight: 700;">Text & Document Plagiarism Detector</h1>
+                <p style="color: var(--text-secondary); margin-top: 6px;">Compare raw text or uploaded documents using TF-IDF and Cosine Similarity</p>
+            </header>
+
+            <div class="grid">
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="origText">Reference Document / File</label>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <label for="origFileInput" class="file-upload-btn">📁 Upload File</label>
+                            <input type="file" id="origFileInput" accept=".txt,.doc,.docx,.pdf,.py,.js,.cpp,.java,.html" style="display:none;" onchange="handleFileUpload(event, 'origText', 'origCount')">
+                            <span class="char-count" id="origCount">0 chars</span>
+                        </div>
+                    </div>
+                    <textarea id="origText" placeholder="Paste source reference text or upload a document file..." oninput="updateCount('origText', 'origCount')"></textarea>
+                </div>
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="suspText">Target Submission / File</label>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <label for="suspFileInput" class="file-upload-btn">📁 Upload File</label>
+                            <input type="file" id="suspFileInput" accept=".txt,.doc,.docx,.pdf,.py,.js,.cpp,.java,.html" style="display:none;" onchange="handleFileUpload(event, 'suspText', 'suspCount')">
+                            <span class="char-count" id="suspCount">0 chars</span>
+                        </div>
+                    </div>
+                    <textarea id="suspText" placeholder="Paste target text or upload a document file to verify..." oninput="updateCount('suspText', 'suspCount')"></textarea>
+                </div>
+            </div>
+
+            <!-- Action Button Bar with Clear Support -->
+            <div style="display: flex; gap: 12px;">
+                <button class="btn-primary" style="flex: 2; padding: 14px;" onclick="checkPlagiarism()">Run Similarity Model</button>
+                <button class="btn-outline" style="flex: 1; padding: 14px;" onclick="clearInputs()">Clear Text</button>
+            </div>
+
+            <div id="resultBox" class="result-box">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <span style="color: var(--text-secondary);">Matching Metrics</span>
+                    <span id="resultBadge" class="badge">--</span>
+                </div>
+                <div style="display:flex; align-items:baseline; gap:12px;">
+                    <span id="resultPercentage" style="font-size: 3rem; font-weight: 700;">0%</span>
+                    <span id="resultStatus" style="font-weight: 500;">--</span>
+                </div>
+
+                <!-- Detailed Document Report Actions -->
+                <div style="display: flex; gap: 12px; margin-top: 16px;">
+                    <button class="btn-primary" style="flex: 1; padding: 10px;" onclick="generateDocumentReport()">View Full Inspection Report</button>
+                    <button class="btn-outline" style="flex: 1; padding: 10px;" onclick="downloadReport()">Export Text Report</button>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- Additional Feature Context (Slide 2) -->
+    <section id="section2">
+        <main class="container" style="text-align: center;">
+            <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 12px;">High-Speed Neural Feature Extraction</h2>
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 24px auto;">
+                Our vector pipelines strip common stop-words, normalize document lengths, and construct sparse n-gram spaces to yield deterministic similarity scores.
+            </p>
+        </main>
+    </section>
+
+    <!-- Authentication Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div class="modal-header" id="modalTitle">Account Access</div>
+            <form class="modal-form" onsubmit="event.preventDefault(); closeModal();">
+                <input type="email" placeholder="Email Address" required />
+                <input type="password" placeholder="Password" required />
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 8px;">Continue</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Additional Analytics Report Modal -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-modal" onclick="closeReportModal()">&times;</span>
+            <div class="modal-header">Global Analytics Report</div>
+            <div id="reportContent" style="color: var(--text-secondary); line-height: 1.8;">
+                Loading report metrics...
+            </div>
+        </div>
+    </div>
+
+    <!-- Document Inspection Report Modal -->
+    <div id="docReportModal" class="modal">
+        <div class="modal-content" style="max-width: 550px;">
+            <span class="close-modal" onclick="closeDocReportModal()">&times;</span>
+            <div class="modal-header">Document Analysis & Similarity Report</div>
+            <div id="docReportContent" style="color: var(--text-secondary); line-height: 1.8;">
+                Analyzing content parameters...
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
